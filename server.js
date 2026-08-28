@@ -32,7 +32,12 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// ১. নতুন ইউজার তৈরি করার API
+// ০. ব্রাউজারে চেক করার জন্য মূল টেস্ট রুট
+app.get('/', (req, res) => {
+    res.send('Casino Backend is running successfully!');
+});
+
+// ১. নতুন ইউজার তৈরি করার API (POST)
 app.post('/api/users', async (req, res) => {
     try {
         const newUser = new User(req.body);
@@ -40,6 +45,16 @@ app.post('/api/users', async (req, res) => {
         res.status(201).json({ success: true, message: 'User created successfully', data: newUser });
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
+    }
+});
+
+// সব ইউজারের লিস্ট দেখার API (GET - ব্রাউজারে দেখার জন্য)
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json({ success: true, count: users.length, data: users });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
